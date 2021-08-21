@@ -18,7 +18,7 @@ stmp=${root:?}/stmp
 [ -f ${root:?}/env.sh ] && . ${root:?}/env.sh
 
 go-singularity() {
-    go-singularity-"$@"
+    go singularity-"$@"
 }
 
 go-singularity-build() {
@@ -34,13 +34,17 @@ go-singularity-exec() {
         --nv \
         -B /soft,/gpfs/mira-home,/home,/lus,/scratch \
         ${simg:?} \
+        "$@"
+}
+
+go-singularity-go() {
+    go-singularity-exec \
         ${root:?}/go.sh \
         "$@"
 }
 
 go-spack() {
-    go-singularity-exec \
-    go-spack-"$@"
+    go singularity go spack-"$@"
 }
 
 go-spack-install() {
@@ -52,13 +56,15 @@ go-spack-install() {
 }
 
 go-spack-exec() (
-    eval $(${spack:?}/bin/spack env activate --sh --dir ${root:?})
-    "$@"
+    eval $(${spack:?}/bin/spack env activate --sh --dir ${root:?}) && "$@"
 )
 
+go-spack-go() {
+    go spack-exec go "$@"
+}
+
 go-virtualenv() {
-    go-spack-exec \
-    go-virtualenv-"$@"
+    go spack go virtualenv-"$@"
 }
 
 go-virtualenv-setup() {
@@ -76,22 +82,20 @@ go-virtualenv-setup() {
     fi
 }
 
-go-virtualenv-python() {
-    exec ${venv:?}/bin/python -u "$@"
-}
-
 go-virtualenv-exec() (
-    . ${venv:?}/bin/activate
-    "$@"
+    . ${venv:?}/bin/activate && "$@"
 )
+
+go-virtualenv-go() {
+    go virtualenv-exec go "$@"
+}
 
 go-wrh() {
     if ! [ -x ${whatreallyhappened:?}/go.sh ]; then
         git clone https://github.com/player1537-playground/whatreallyhappened.git ${whatreallyhappened:?}
     fi
 
-    go-virtualenv-exec \
-    go-wrh-"$@"
+    go virtualenv go wrh-"$@"
 }
 
 go-wrh-configure() {
@@ -107,11 +111,19 @@ go-wrh-install() {
 }
 
 go-wrh-exec() {
-    exec ${whatreallyhappened:?}/go.sh exec ${root:?}/go.sh "$@"
+    exec ${whatreallyhappened:?}/go.sh exec "$@"
+}
+
+go-wrh-go() {
+    go wrh-exec ${root:?}/go.sh "$@"
 }
 
 go-exec() {
-    go-wrh-exec "$@"
+    go wrh exec "$@"
+}
+
+go-python() {
+    go exec python "$@"
 }
 
 go-clean() {
@@ -127,7 +139,21 @@ go-clean() {
     done
 }
 
-case "${1:-}" in
-(go-*) "$@";;
-(*) go-"$@";;
-esac
+go-buildall() {
+    (go singularity build) &&
+    (go spack install) &&
+    (go virtualenv setup) &&
+    (go wrh configure) &&
+    (go wrh build) &&
+    (go wrh install)
+}
+
+go() {
+    case "${1:-}" in
+    (go) "$@";;
+    (go-*) "$@";;
+    (*) go-"$@";;
+    esac
+}
+
+go "$@"

@@ -1,0 +1,9 @@
+/env.sh
+/.spack-env
+/checkpoint
+/data
+/logs
+/spack.lock
+/spack
+/whatreallyhappened
+*.pyc
