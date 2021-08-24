@@ -30,3 +30,25 @@ $ ./go.sh wrh build
 $ ./go.sh wrh install
 ```
 
+
+## Existing Data
+
+There is already some existing data, primarily checkpoints and log files.
+
+For ResNet50, these are at:
+
+```console
+$ ls /lus/theta-fs0/projects/VeloC/metem/logs/ai-apps/checkpoint-*e.h5
+$ ls /lus/theta-fs0/projects/VeloC/metem/logs/ai-apps/*of8.log
+```
+
+For example,
+`/lus/theta-fs0/projects/VeloC/metem/logs/ai-apps/checkpoint-5e.h5` is the
+checkpoint taken after 5 epochs have completed.
+
+For NT3, these are at:
+
+```console
+$ ls /lus/theta-fs0/projects/VeloC/metem/logs/BL\,dataset\=NT3\,model\=default\,nworkers\=8\,seed\=1337\,div\=1\,nepochs\=200/checkpoint-*.h5
+$ ls /lus/theta-fs0/projects/VeloC/metem/logs/BL\,dataset\=NT3\,model\=default\,nworkers\=8\,seed\=1337\,div\=1\,nepochs\=200/*of8.log
+```

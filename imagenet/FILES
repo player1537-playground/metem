@@ -1,3 +1,4 @@
+go.sh
 run.sh
 keras_resnet50.py
 mypatch.py
